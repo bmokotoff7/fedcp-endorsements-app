@@ -46,6 +46,7 @@ h1 {
     font-family: 'Josefin Sans', sans-serif;
     font-size: 22px;
     margin: 8px 0;
+    cursor: pointer;
 }
 
 h2 {
