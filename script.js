@@ -23,6 +23,7 @@ publishBtn.addEventListener("click", function() {
     }
     if (messageObj.to != "" && messageObj.from != "" && messageObj.content != "") {
         push(messageListInDB, messageObj)
+        clearMessageInputFields()
     }
 })
 
@@ -40,7 +41,9 @@ onValue(messageListInDB, function(snapshot) {
     }
 })
 
-function clearMessageInputEl() {
+function clearMessageInputFields() {
+    messageToInputEl.value = ""
+    messageFromInputEl.value = ""
     messageInputEl.value = ""
 }
 
@@ -63,6 +66,7 @@ function appendMessageToList(message) {
         console.log(`Liked message ${messageID}`)
     })
 
+    // TO-DO: look into odd behavior after fixing how messages display (delete button only working on newest entry)
     // Create unique delete button for this message
     let deleteBtn = document.createElement("button")
     deleteBtn.className = "message-delete-btn"
