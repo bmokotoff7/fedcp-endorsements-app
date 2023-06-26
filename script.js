@@ -9,15 +9,20 @@ const app = initializeApp(appSettings)
 const database = getDatabase(app)
 const messageListInDB = ref(database, "messageList")
 
+const messageToInputEl = document.getElementById("message-to")
+const messageFromInputEl = document.getElementById("message-from")
 const messageInputEl = document.getElementById("message-input")
 const publishBtn = document.getElementById("publish-btn")
 const messageListEl = document.getElementById("message-list")
 
-publishBtn.addEventListener("click", function(){
-    let messageContent = messageInputEl.value 
-    if (messageContent != "") {
-        push(messageListInDB, messageContent)
-        clearMessageInputEl()
+publishBtn.addEventListener("click", function() {
+    let messageObj = {
+        to: messageToInputEl.value,
+        from: messageFromInputEl.value,
+        content: messageInputEl.value
+    }
+    if (messageObj.to != "" && messageObj.from != "" && messageObj.content != "") {
+        push(messageListInDB, messageObj)
     }
 })
 
@@ -43,6 +48,7 @@ function clearMessageListEl() {
     messageListEl.innerHTML = ""
 }
 
+// TO-DO: fix how message appears here. Shows correctly in DB, but appears as an object on message cards
 function appendMessageToList(message) {
     // Decompose message into components
     let messageID = message[0]
