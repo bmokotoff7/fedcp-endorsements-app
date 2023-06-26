@@ -32,9 +32,28 @@ h1 {
     border-radius: 8px;
     resize: none;
     padding: 10px 20px;
+    margin: 10px 0 5px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+}
+
+#message-details {
+    display: flex;
+    justify-content: space-between;
+}
+
+.message-detail {
+    width: 120px;
+    background-color: #444059;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    resize: none;
+    padding: 12px 15px;
     margin: 10px 0;
     font-size: 15px;
     font-family: 'Inter', sans-serif;
+    text-align: center;
 }
 
 #publish-btn {
@@ -57,7 +76,7 @@ h2 {
 ul {
     list-style: none;
     font-family: 'Inter', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     text-align: left;
     padding: 0;
     margin: 0;
@@ -68,6 +87,16 @@ ul {
 ul li {
     background-color: white;
     color: #1B1924;
-    padding: 12px;
+    padding: 5px 10px;
     margin: 8px 0;
+    border: none;
+    border-radius: 8px;
+}
+
+.message-btns {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-bottom: 5px;
+    padding: 0;
 }

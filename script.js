@@ -46,12 +46,43 @@ function clearMessageListEl() {
 function appendMessageToList(message) {
     let messageID = message[0]
     let messageContent = message[1]
-    let newMessage = document.createElement("li")
-    newMessage.textContent = messageContent
-    newMessage.addEventListener("dblclick", function() {
-        let exactLocationOfMessageInDB = ref(database, `messageList/${messageID}`)
-        remove(exactLocationOfMessageInDB)
+
+    let likeBtn = document.createElement("button")
+    likeBtn.className = "message-like-btn"
+    likeBtn.id = `like-btn-${messageID}`
+    likeBtn.innerText = "Like"
+    likeBtn.addEventListener("click", function() {
+        console.log(`Liked message ${messageID}`)
     })
 
-    messageListEl.append(newMessage)
+    let deleteBtn = document.createElement("button")
+    deleteBtn.className = "message-delete-btn"
+    deleteBtn.id = `delete-btn-${messageID}`
+    deleteBtn.innerText = "Delete"
+    deleteBtn.addEventListener("click", function() {
+        console.log(`Deleted message ${messageID}`)
+    })
+
+    messageListEl.innerHTML += `
+        <li>
+            <p>To: </p>
+            <p>${messageContent}</p>
+            <p>From: </p>
+            <div class="message-btns" id="message-btns-${messageID}">
+            </div>
+        </li>`
+
+    let messageBtnDiv = document.getElementById(`message-btns-${messageID}`)
+    messageBtnDiv.append(likeBtn)
+    messageBtnDiv.append(deleteBtn)
+
+    // let newMessage = document.createElement("li")
+    
+    // newMessage.textContent = messageContent
+    // newMessage.addEventListener("dblclick", function() {
+    //     let exactLocationOfMessageInDB = ref(database, `messageList/${messageID}`)
+    //     remove(exactLocationOfMessageInDB)
+    // })
+
+    // messageListEl.append(newMessage)
 }
