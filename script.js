@@ -63,6 +63,11 @@ function appendMessageToList(message) {
     const messageFrom = messageObj.from
     const messageContent = messageObj.content
     let messageLikes = messageObj.likes
+    
+    // Save message to localStorage if it's not there already (for like feature)
+    if (!localStorage.getItem(`${messageID}`)) {
+        localStorage.setItem(`${messageID}`, JSON.stringify(false))
+    }
 
     // Create message-div
     const messageDiv = document.createElement("div")
@@ -82,11 +87,7 @@ function appendMessageToList(message) {
     const likeBtn = document.createElement("button")
     likeBtn.textContent = `Likes: ${messageLikes}`
     likeBtn.addEventListener("click", function() {
-        console.log(`Liked message ${messageID}`)
-        messageLikes++
-        likeBtn.textContent = `Likes: ${messageLikes}`
-        const exactLocationOfMessageInDB = ref(database, `messageList/${messageID}/likes`)
-        set(exactLocationOfMessageInDB, messageLikes)
+        likeMessage(`${messageID}`, messageLikes, likeBtn)
     })
     // Create delete-btn
     const deleteBtn = document.createElement("button")
@@ -94,6 +95,7 @@ function appendMessageToList(message) {
     deleteBtn.addEventListener("click", function() {
         const exactLocationOfMessageInDB = ref(database, `messageList/${messageID}`)
         remove(exactLocationOfMessageInDB)
+        localStorage.removeItem(`${messageID}`)
     })
 
     // Append like-btn to message-btns div
@@ -106,5 +108,16 @@ function appendMessageToList(message) {
     messageDiv.append(messageBtns)
     // Append message-div to message-list
     messageListEl.append(messageDiv)
+}
+
+function likeMessage(messageID, messageLikes, likeBtn) {
+    //console.log(localStorage.getItem(messageID))
+    if (JSON.parse(localStorage.getItem(messageID)) === false) {
+        messageLikes++
+        likeBtn.textContent = `Likes: ${messageLikes}`
+        const exactLocationOfMessageInDB = ref(database, `messageList/${messageID}/likes`)
+        set(exactLocationOfMessageInDB, messageLikes)
+        localStorage.setItem(`${messageID}`, true)
+    }
 }
 
