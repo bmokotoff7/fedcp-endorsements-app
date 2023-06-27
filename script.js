@@ -38,6 +38,17 @@ publishBtn.addEventListener("click", function(snapshot) {
         myAuthoredMessages.push(id)
         localStorage.setItem("myAuthoredMessages", JSON.stringify(myAuthoredMessages))
         
+        // Makes delete button appear immediately after the message is published
+        let messageBtnsDiv = document.getElementById(`message-btns-${id}`)
+        for (let i = 0; i < myAuthoredMessages.length; i++) {
+            if (myAuthoredMessages[i] === id) {
+                // Create delete-btn
+                const deleteBtn = createDeleteBtn(id, myAuthoredMessages)
+                // Append delete-btn to message-btns div
+                messageBtnsDiv.append(deleteBtn)
+            }
+        }
+
         clearMessageInputFields()
     }
 })
@@ -97,6 +108,7 @@ function appendMessageToList(message) {
     // Create message-btns div
     const messageBtns = document.createElement("div")
     messageBtns.className = "message-btns"
+    messageBtns.id = `message-btns-${messageID}`
     // Create like-btn
     const likeBtn = document.createElement("button")
     likeBtn.textContent = `Likes: ${messageLikes}`
@@ -105,24 +117,16 @@ function appendMessageToList(message) {
     })
     // Append like-btn to message-btns div
     messageBtns.append(likeBtn)
-    
-    // Create delete-btn
-    const deleteBtn = document.createElement("button")
-    deleteBtn.textContent = "Delete"
-    deleteBtn.addEventListener("click", function() {
-        const exactLocationOfMessageInDB = ref(database, `messageList/${messageID}`)
-        remove(exactLocationOfMessageInDB)
-        localStorage.removeItem(`${messageID}`)
-        for (let i = 0; i < myAuthoredMessages.length; i++) {
-            if (myAuthoredMessages[i] === messageID) {
-                myAuthoredMessages.splice(i, 1)
-                localStorage.setItem("myAuthoredMessages", JSON.stringify(myAuthoredMessages))
-            }
+
+    // Makes delete button appear everytime the message list is refreshed
+    for (let i = 0; i < myAuthoredMessages.length; i++) {
+        if (myAuthoredMessages[i] === messageID) {
+            // Create delete-btn
+            const deleteBtn = createDeleteBtn(messageID, myAuthoredMessages)
+            // Append delete-btn to message-btns div
+            messageBtns.append(deleteBtn)
         }
-    })
-    // Append delete-btn to message-btns div
-    messageBtns.append(deleteBtn)
-    
+    }
     
     // Append message to message-div
     messageDiv.append(messageEl)
@@ -133,7 +137,6 @@ function appendMessageToList(message) {
 }
 
 function likeMessage(messageID, messageLikes, likeBtn) {
-    //console.log(localStorage.getItem(messageID))
     if (JSON.parse(localStorage.getItem(messageID)) === false) {
         messageLikes++
         likeBtn.textContent = `Likes: ${messageLikes}`
@@ -143,3 +146,23 @@ function likeMessage(messageID, messageLikes, likeBtn) {
     }
 }
 
+function createDeleteBtn(messageID, myAuthoredMessages) {
+    const deleteBtn = document.createElement("button")
+    deleteBtn.textContent = "Delete"
+    deleteBtn.addEventListener("click", function() {
+        deleteMessage(messageID, myAuthoredMessages)
+    })
+    return deleteBtn
+}
+
+function deleteMessage(messageID, myAuthoredMessages) {
+    const exactLocationOfMessageInDB = ref(database, `messageList/${messageID}`)
+    remove(exactLocationOfMessageInDB)
+    localStorage.removeItem(`${messageID}`)
+    for (let i = 0; i < myAuthoredMessages.length; i++) {
+        if (myAuthoredMessages[i] === messageID) {
+            myAuthoredMessages.splice(i, 1)
+            localStorage.setItem("myAuthoredMessages", JSON.stringify(myAuthoredMessages))
+        }
+    }
+}
