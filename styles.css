@@ -73,8 +73,7 @@ h2 {
     margin: 20px auto;
 }
 
-ul {
-    list-style: none;
+#message-list {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     text-align: left;
@@ -84,7 +83,7 @@ ul {
     flex-direction: column-reverse;
 }
 
-ul li {
+.message-div {
     background-color: white;
     color: #1B1924;
     padding: 5px 10px;

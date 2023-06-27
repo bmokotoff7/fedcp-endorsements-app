@@ -31,12 +31,6 @@ publishBtn.addEventListener("click", function() {
 // Updates the message list when the database is modified
 onValue(messageListInDB, function(snapshot) {
     if (snapshot.exists()) {
-        // let messagesArray = Object.entries(snapshot.val())
-        // clearMessageListEl()
-        // for (let i = 0; i < messagesArray.length; i++) {
-        //     let currentMessage = messagesArray[i]
-        //     appendMessageToList(currentMessage)
-        // }
         let messagesArray = Object.entries(snapshot.val())
         // FORMAT: [[messageID, {content, from, to}]]
         clearMessageListEl()
@@ -60,47 +54,43 @@ function clearMessageListEl() {
     messageListEl.innerHTML = ""
 }
 
-// TO-DO: fix how message appears here. Shows correctly in DB, but appears as an object on message cards
 function appendMessageToList(message) {
     // Decompose message into components
-    let messageID = message[0]
-    let messageTo = message[1].to
-    let messageFrom = message[1].from
-    let messageContent = message[1].content
+    const messageID = message[0]
+    const messageObj = message[1]
+    const messageTo = messageObj.to
+    const messageFrom = messageObj.from
+    const messageContent = messageObj.content
 
-    // Create unique like button for this message
-    let likeBtn = document.createElement("button")
-    likeBtn.className = "message-like-btn"
-    likeBtn.id = `like-btn-${messageID}`
-    likeBtn.innerText = "Like"
-    likeBtn.addEventListener("click", function() {
-        console.log(`Liked message ${messageID}`)
-    })
-
-    // TO-DO: look into odd behavior after fixing how messages display (delete button only working on newest entry)
-    // Create unique delete button for this message
-    let deleteBtn = document.createElement("button")
-    deleteBtn.className = "message-delete-btn"
-    deleteBtn.id = `delete-btn-${messageID}`
-    deleteBtn.innerText = "Delete"
+    // Create message-div
+    const messageDiv = document.createElement("div")
+    messageDiv.className = "message-div"
+    // Create message
+    const messageEl = document.createElement("div")
+    messageEl.className = "message"
+    messageEl.innerHTML = `
+        <p>To: ${messageTo}</p>
+        <p>${messageContent}</p>
+        <p>From: ${messageFrom}</p>
+    `
+    // Create message-btns
+    const messageBtns = document.createElement("div")
+    messageBtns.className = "message-btns"
+    // Create delete-btn
+    const deleteBtn = document.createElement("button")
+    deleteBtn.textContent = "Delete"
     deleteBtn.addEventListener("click", function() {
-        //let exactLocationOfMessageInDB = ref(database, `messageList/${messageID}`)
-        //remove(exactLocationOfMessageInDB)
-        console.log(`Deleted message ${messageID}`)
+        const exactLocationOfMessageInDB = ref(database, `messageList/${messageID}`)
+        remove(exactLocationOfMessageInDB)
     })
 
-    // Add formatted message to list 
-    messageListEl.innerHTML += `
-        <li>
-            <p>To: ${messageTo}</p>
-            <p>${messageContent}</p>
-            <p>From: ${messageFrom}</p>
-            <div class="message-btns" id="message-btns-${messageID}">
-            </div>
-        </li>`
-
-    // Add like and delete buttons to the formatted message
-    let messageBtnDiv = document.getElementById(`message-btns-${messageID}`)
-    messageBtnDiv.append(likeBtn)
-    messageBtnDiv.append(deleteBtn)
+    // Append delete-btn to message-btns div
+    messageBtns.append(deleteBtn)
+    // Append message to message-div
+    messageDiv.append(messageEl)
+    // Append message-btns to message-div
+    messageDiv.append(messageBtns)
+    // Append message-div to message-list
+    messageListEl.append(messageDiv)
 }
+
