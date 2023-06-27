@@ -15,8 +15,16 @@ const messageInputEl = document.getElementById("message-input")
 const publishBtn = document.getElementById("publish-btn")
 const messageListEl = document.getElementById("message-list")
 
+let myAuthoredMessages = []
+const myAuthoredMessagesInLS = JSON.parse(localStorage.getItem("myAuthoredMessages"))
+
+// Get my authored messages from Local Storage
+if (myAuthoredMessagesInLS) {
+    myAuthoredMessages = myAuthoredMessagesInLS
+}
+
 // Adds message to the database
-publishBtn.addEventListener("click", function() {
+publishBtn.addEventListener("click", function(snapshot) {
     let messageObj = {
         to: messageToInputEl.value,
         from: messageFromInputEl.value,
@@ -24,7 +32,12 @@ publishBtn.addEventListener("click", function() {
         likes: 0
     }
     if (messageObj.to != "" && messageObj.from != "" && messageObj.content != "") {
-        push(messageListInDB, messageObj)
+        let myMessage = push(messageListInDB, messageObj)
+        let id = myMessage.key
+        
+        myAuthoredMessages.push(id)
+        localStorage.setItem("myAuthoredMessages", JSON.stringify(myAuthoredMessages))
+        
         clearMessageInputFields()
     }
 })
@@ -66,6 +79,7 @@ function appendMessageToList(message) {
     
     // Save message to localStorage if it's not there already (for like feature)
     if (!localStorage.getItem(`${messageID}`)) {
+        const messageInLS = {}
         localStorage.setItem(`${messageID}`, JSON.stringify(false))
     }
 
