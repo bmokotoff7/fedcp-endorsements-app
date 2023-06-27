@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
-import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
+import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
 
 const appSettings = {
     databaseURL: "https://we-are-the-champions-8e273-default-rtdb.firebaseio.com/"
@@ -20,7 +20,8 @@ publishBtn.addEventListener("click", function() {
     let messageObj = {
         to: messageToInputEl.value,
         from: messageFromInputEl.value,
-        content: messageInputEl.value
+        content: messageInputEl.value,
+        likes: 0
     }
     if (messageObj.to != "" && messageObj.from != "" && messageObj.content != "") {
         push(messageListInDB, messageObj)
@@ -61,11 +62,12 @@ function appendMessageToList(message) {
     const messageTo = messageObj.to
     const messageFrom = messageObj.from
     const messageContent = messageObj.content
+    let messageLikes = messageObj.likes
 
     // Create message-div
     const messageDiv = document.createElement("div")
     messageDiv.className = "message-div"
-    // Create message
+    // Create message div
     const messageEl = document.createElement("div")
     messageEl.className = "message"
     messageEl.innerHTML = `
@@ -73,9 +75,19 @@ function appendMessageToList(message) {
         <p>${messageContent}</p>
         <p>From: ${messageFrom}</p>
     `
-    // Create message-btns
+    // Create message-btns div
     const messageBtns = document.createElement("div")
     messageBtns.className = "message-btns"
+    // Create like-btn
+    const likeBtn = document.createElement("button")
+    likeBtn.textContent = `Likes: ${messageLikes}`
+    likeBtn.addEventListener("click", function() {
+        console.log(`Liked message ${messageID}`)
+        messageLikes++
+        likeBtn.textContent = `Likes: ${messageLikes}`
+        const exactLocationOfMessageInDB = ref(database, `messageList/${messageID}/likes`)
+        set(exactLocationOfMessageInDB, messageLikes)
+    })
     // Create delete-btn
     const deleteBtn = document.createElement("button")
     deleteBtn.textContent = "Delete"
@@ -84,6 +96,8 @@ function appendMessageToList(message) {
         remove(exactLocationOfMessageInDB)
     })
 
+    // Append like-btn to message-btns div
+    messageBtns.append(likeBtn)
     // Append delete-btn to message-btns div
     messageBtns.append(deleteBtn)
     // Append message to message-div
