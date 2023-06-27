@@ -103,6 +103,9 @@ function appendMessageToList(message) {
     likeBtn.addEventListener("click", function() {
         likeMessage(`${messageID}`, messageLikes, likeBtn)
     })
+    // Append like-btn to message-btns div
+    messageBtns.append(likeBtn)
+    
     // Create delete-btn
     const deleteBtn = document.createElement("button")
     deleteBtn.textContent = "Delete"
@@ -110,12 +113,17 @@ function appendMessageToList(message) {
         const exactLocationOfMessageInDB = ref(database, `messageList/${messageID}`)
         remove(exactLocationOfMessageInDB)
         localStorage.removeItem(`${messageID}`)
+        for (let i = 0; i < myAuthoredMessages.length; i++) {
+            if (myAuthoredMessages[i] === messageID) {
+                myAuthoredMessages.splice(i, 1)
+                localStorage.setItem("myAuthoredMessages", JSON.stringify(myAuthoredMessages))
+            }
+        }
     })
-
-    // Append like-btn to message-btns div
-    messageBtns.append(likeBtn)
     // Append delete-btn to message-btns div
     messageBtns.append(deleteBtn)
+    
+    
     // Append message to message-div
     messageDiv.append(messageEl)
     // Append message-btns to message-div
