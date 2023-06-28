@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
-import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
+import { getDatabase, ref, push, onValue, remove, set, get, child } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
 
 const appSettings = {
     databaseURL: "https://we-are-the-champions-8e273-default-rtdb.firebaseio.com/"
@@ -17,6 +17,8 @@ const messageListEl = document.getElementById("message-list")
 
 let myAuthoredMessages = []
 const myAuthoredMessagesInLS = JSON.parse(localStorage.getItem("myAuthoredMessages"))
+
+window.onload = removeDeletedItemsFromLS(database)
 
 // Get my authored messages from Local Storage
 if (myAuthoredMessagesInLS) {
@@ -90,7 +92,6 @@ function appendMessageToList(message) {
     
     // Save message to localStorage if it's not there already (for like feature)
     if (!localStorage.getItem(`${messageID}`)) {
-        const messageInLS = {}
         localStorage.setItem(`${messageID}`, JSON.stringify(false))
     }
 
@@ -142,7 +143,7 @@ function likeMessage(messageID, messageLikes, likeBtn) {
         likeBtn.textContent = `Likes: ${messageLikes}`
         const exactLocationOfMessageInDB = ref(database, `messageList/${messageID}/likes`)
         set(exactLocationOfMessageInDB, messageLikes)
-        localStorage.setItem(`${messageID}`, true)
+        localStorage.setItem(`${messageID}`, JSON.stringify(true))
     }
 }
 
@@ -165,4 +166,31 @@ function deleteMessage(messageID, myAuthoredMessages) {
             localStorage.setItem("myAuthoredMessages", JSON.stringify(myAuthoredMessages))
         }
     }
+}
+
+// If it's not in the database on startup, remove from local storage
+    // get all items from the database
+    // for each item in local storage, if they don't match any items in the current database, remove them from local storage
+
+function removeDeletedItemsFromLS(database) {
+    const dbRef = ref(database)
+    let messages = []
+     get(child(dbRef, "messageList")).then((snapshot) => {
+        snapshot.forEach(childSnapshot => {
+            messages.push(childSnapshot.key)
+        })
+        for (let i = 0; i < localStorage.length; i++) {
+            let isInDB = false
+            for (let j = 0; j < messages.length; j++) {
+                if (localStorage.key(i) === messages[j]) {
+                    isInDB = true
+                }
+            }
+            if (isInDB === false && localStorage.key(i) != "myAuthoredMessages" && localStorage.key(i) != "firebase:host:we-are-the-champions-8e273-default-rtdb.firebaseio.com") {
+                let removedItem = localStorage.key(i)
+                console.log(removedItem)
+                localStorage.removeItem(removedItem)
+            }
+        }
+    })
 }
