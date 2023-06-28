@@ -92,10 +92,42 @@ h2 {
     border-radius: 8px;
 }
 
+.message-to-from {
+    margin: 10px 0;
+    font-weight: 600;
+}
+
+.message-content {
+    margin: 12px 0;
+    word-wrap: break-word;
+}
+
 .message-btns {
     display: flex;
     justify-content: end;
     align-items: center;
     margin-bottom: 5px;
     padding: 0;
+}
+
+.like-btn {
+    margin-right: 5px;
+    max-width: fit-content;
+    border: 1px solid #1B1924;
+    height: 30px;
+    background-color: white;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #1B1924;
+}
+
+.delete-btn {
+    height: 30px;
+    background-color: white;
+    border: 1px solid #1B1924;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #1B1924;
+    font-weight: bold;
 }

@@ -102,9 +102,9 @@ function appendMessageToList(message) {
     const messageEl = document.createElement("div")
     messageEl.className = "message"
     messageEl.innerHTML = `
-        <p>To: ${messageTo}</p>
-        <p>${messageContent}</p>
-        <p>From: ${messageFrom}</p>
+        <p class="message-to-from">To: ${messageTo}</p>
+        <p class="message-content">${messageContent}</p>
+        <p class="message-to-from">From: ${messageFrom}</p>
     `
     // Create message-btns div
     const messageBtns = document.createElement("div")
@@ -112,7 +112,9 @@ function appendMessageToList(message) {
     messageBtns.id = `message-btns-${messageID}`
     // Create like-btn
     const likeBtn = document.createElement("button")
-    likeBtn.textContent = `Likes: ${messageLikes}`
+    likeBtn.className = "like-btn"
+    likeBtn.id = `like-btn-${messageID}`
+    likeBtn.textContent = `${messageLikes} ♥`
     likeBtn.addEventListener("click", function() {
         likeMessage(`${messageID}`, messageLikes, likeBtn)
     })
@@ -135,27 +137,32 @@ function appendMessageToList(message) {
     messageDiv.append(messageBtns)
     // Append message-div to message-list
     messageListEl.append(messageDiv)
+
+    styleLikeBtn(messageID)
+
 }
 
 function likeMessage(messageID, messageLikes, likeBtn) {
     if (JSON.parse(localStorage.getItem(messageID)) === false) {
         messageLikes++
-        likeBtn.textContent = `Likes: ${messageLikes}`
         const exactLocationOfMessageInDB = ref(database, `messageList/${messageID}/likes`)
         set(exactLocationOfMessageInDB, messageLikes)
         localStorage.setItem(`${messageID}`, JSON.stringify(true))
+        likeBtn.textContent = `${messageLikes} ♥`
     }
     else if (JSON.parse(localStorage.getItem(messageID)) === true) {
         messageLikes--
-        likeBtn.textContent = `Likes: ${messageLikes}`
+        likeBtn.textContent = `${messageLikes} ♥`
         const exactLocationOfMessageInDB = ref(database, `messageList/${messageID}/likes`)
         set(exactLocationOfMessageInDB, messageLikes)
         localStorage.setItem(`${messageID}`, JSON.stringify(false))
     }
+    styleLikeBtn(messageID)
 }
 
 function createDeleteBtn(messageID, myAuthoredMessages) {
     const deleteBtn = document.createElement("button")
+    deleteBtn.className = "delete-btn"
     deleteBtn.textContent = "Delete"
     deleteBtn.addEventListener("click", function() {
         deleteMessage(messageID, myAuthoredMessages)
@@ -200,4 +207,16 @@ function removeDeletedItemsFromLS(database) {
             }
         }
     })
+}
+
+function styleLikeBtn(messageID) {
+    let likeBtn = document.getElementById(`like-btn-${messageID}`)
+    if (JSON.parse(localStorage.getItem(messageID)) === true) {
+        likeBtn.style.color = "#F43F5E"
+        likeBtn.style.border = "1px solid #F43F5E"
+    }
+    else if (JSON.parse(localStorage.getItem(messageID)) === false) {
+        likeBtn.style.color = "#1B1924"
+        likeBtn.style.border = "1px solid #1B1924"
+    }
 }
