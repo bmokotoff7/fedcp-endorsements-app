@@ -145,6 +145,13 @@ function likeMessage(messageID, messageLikes, likeBtn) {
         set(exactLocationOfMessageInDB, messageLikes)
         localStorage.setItem(`${messageID}`, JSON.stringify(true))
     }
+    else if (JSON.parse(localStorage.getItem(messageID)) === true) {
+        messageLikes--
+        likeBtn.textContent = `Likes: ${messageLikes}`
+        const exactLocationOfMessageInDB = ref(database, `messageList/${messageID}/likes`)
+        set(exactLocationOfMessageInDB, messageLikes)
+        localStorage.setItem(`${messageID}`, JSON.stringify(false))
+    }
 }
 
 function createDeleteBtn(messageID, myAuthoredMessages) {
